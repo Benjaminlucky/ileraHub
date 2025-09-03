@@ -1,6 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -8,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import supabase from "../../lib/supabase";
 
 export default function PharmacySignupScreen() {
   const [pharmacyName, setPharmacyName] = useState("");
@@ -17,15 +20,35 @@ export default function PharmacySignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
 
-  const handleSignup = () => {
-    console.log({
-      pharmacyName,
+  const router = useRouter();
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
       email,
-      phone,
       password,
-      confirmPassword,
-      licenseNumber,
+      options: {
+        data: {
+          pharmacy_name: pharmacyName,
+          phone,
+          license_number: licenseNumber,
+        },
+      },
     });
+
+    if (error) {
+      Alert.alert("Signup Failed", error.message);
+    } else {
+      Alert.alert(
+        "Success",
+        "Account created! Please check your email to verify your account."
+      );
+      router.push("/pharmacy/login");
+    }
   };
 
   return (
@@ -94,7 +117,7 @@ export default function PharmacySignupScreen() {
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/pharmacy/login")}>
             <Text style={styles.link}>
               Already have an account?{" "}
               <Text style={styles.linkHighlight}>Sign In</Text>

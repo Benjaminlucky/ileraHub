@@ -2,6 +2,7 @@
 import { useRouter } from "expo-router";
 import { Button, Center, Text, VStack } from "native-base";
 import { Pressable, SafeAreaView } from "react-native";
+import "react-native-url-polyfill/auto";
 
 export default function Home() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function Home() {
       </Center>
 
       <Pressable onPress={() => console.log("Admin Login Pressed")}>
-        <Text fontSize="sm" color="#4A90E2" mt={10} textAlign="center">
+        <Text fontSize="sm" color="#4A90E2" mt={10} mb={10} textAlign="center">
           Admin Login
         </Text>
       </Pressable>
